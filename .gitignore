@@ -1,0 +1,89 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# =========================
+# Jupyter Notebooks
+# =========================
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+*.env
+
+# =========================
+# Logs (important for your pipeline_log.csv)
+# =========================
+*.log
+logs/
+pipeline_log.csv
+
+# =========================
+# Data files (VERY IMPORTANT for MMM projects)
+# =========================
+data/
+raw_data/
+processed_data/
+*.csv
+*.parquet
+*.feather
+*.duckdb
+*.db
+
+# (If you want to keep sample datasets, remove *.csv rule and be more specific)
+
+# =========================
+# Model artifacts (MMM outputs, trained models)
+# =========================
+models/
+*.pkl
+*.joblib
+*.h5
+
+# =========================
+# IDEs
+# =========================
+.vscode/
+.idea/
+*.swp
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Poetry / Pip / packaging
+# =========================
+dist/
+build/
+*.egg-info/
+
+# =========================
+# pytest / coverage
+# =========================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# =========================
+# Misc project-specific (MMM)
+# =========================
+results/
+output/
+figures/
+reports/

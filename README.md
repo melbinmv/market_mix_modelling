@@ -60,10 +60,3 @@ After running `2_model.py`:
 After running `3_pipeline.py`:
 - `mmm_warehouse.duckdb` — local data warehouse (all historical data)
 - `pipeline_log.csv` — log of every pipeline run with R² and MAPE
-
-## What to Talk About in Interviews
-
-- Why adstock? Marketing effects don't disappear instantly — TV ads have weeks of residual impact
-- Why Hill saturation? Spend has diminishing returns — the 10th £1k is worth less than the 1st
-- Why OLS? Interpretable coefficients, fast, works well with weekly aggregated data
-- Next steps: Bayesian MMM (PyMC-Marketing) for uncertainty quantification, cross-validation

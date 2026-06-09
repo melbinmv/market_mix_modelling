@@ -2,9 +2,7 @@
 
 An end-to-end Marketing Mix Modeling (MMM) system built in Python that simulates marketing data, applies feature transformations (Adstock + Hill Saturation), estimates channel impact using OLS regression and operationalises the workflow through an automated ETL pipeline with DuckDB storage and model retraining.
 
-
-
----
+-----
 
 # Business Problem
 
@@ -20,67 +18,78 @@ This project solves that by:
 - Estimating ROI per channel
 - Automating model retraining as new data arrives
 
----
+-----
 
 # System Overview
 
 The system has two main components:
 
 ### 1. MMM Model (model.py)
+
 - Builds transformation + regression-based MMM
 - Performs grid search for optimal parameters
 - Estimates channel contribution and ROI
 
 ### 2. ETL + Pipeline (pipeline.py)
+
 - Simulates weekly data ingestion
 - Validates and transforms data
 - Loads into DuckDB warehouse
 - Re-trains MMM automatically
 - Logs each run for monitoring
 
----
+-----
 
 # Architecture
+
+```mermaid
 graph TD
+    A[1_generate_data.py<br>Generate Synthetic Data] --> B[data.csv]
+    B --> C[pipeline.py<br>ETL Orchestration]
+    C --> C1[EXTRACT<br>Read CSV + Simulate New Week]
+    C1 --> C2[TRANSFORM<br>Validation + Adstock + Saturation]
+    C2 --> C3[LOAD<br>DuckDB Warehouse]
+    C3 --> D[mmm_warehouse.duckdb]
+    D --> E[Refit MMM Model<br>OLS Regression]
+    E --> F[Channel Attribution]
+    E --> G[ROI Analysis]
+    E --> H[Model Diagnostics]
+    E --> I[pipeline_log.csv<br>Run Monitoring]
+```
 
-A[1_generate_data.py<br>Generate Synthetic Data] --> B[data.csv]
-
-B --> C[pipeline.py<br>ETL Orchestration]
-
-C --> C1[EXTRACT<br>Read CSV + Simulate New Week]
-C1 --> C2[TRANSFORM<br>Validation + Adstock + Saturation]
-C2 --> C3[LOAD<br>DuckDB Warehouse]
-
-C3 --> D[mmm_warehouse.duckdb]
-
-D --> E[Refit MMM Model<br>OLS Regression]
-
-E --> F[Channel Attribution]
-E --> G[ROI Analysis]
-E --> H[Model Diagnostics]
-
-E --> I[pipeline_log.csv<br>Run Monitoring]
+-----
 
 # Project Structure
 
+```mermaid
 graph TD
+    A[mmm-project]
 
-A[mmm-project] --> B[1_generate_data.py]
-A --> C[2_model.py]
-A --> D[pipeline.py]
-A --> E[transforms.py]
+    A --> B[Core Scripts]
+    B --> B1[1_generate_data.py<br>Data simulation]
+    B --> B2[2_model.py<br>MMM training + ROI]
+    B --> B3[pipeline.py<br>ETL + retraining pipeline]
+    B --> B4[transforms.py<br>Adstock + saturation functions]
 
-A --> F[data.csv]
-A --> G[contributions.csv]
-A --> H[model_params.csv]
-A --> I[mmm_results.png]
-A --> J[pipeline_log.csv]
-A --> K[mmm_warehouse.duckdb]
-A --> L[requirements.txt]
-A --> M[README.md]
-A --> N[.gitignore]
+    A --> C[Input Data]
+    C --> C1[data.csv<br>Marketing dataset]
 
----
+    A --> D[Model Outputs]
+    D --> D1[contributions.csv<br>Channel attribution]
+    D --> D2[model_params.csv<br>Learned parameters]
+    D --> D3[mmm_results.png<br>Model diagnostics]
+
+    A --> E[Pipeline & Logs]
+    E --> E1[pipeline_log.csv<br>Run history]
+    E --> E2[mmm_warehouse.duckdb<br>Local data warehouse]
+
+    A --> F[Config & Docs]
+    F --> F1[requirements.txt]
+    F --> F2[README.md]
+    F --> F3[.gitignore]
+```
+
+-----
 
 # Marketing Mix Model (MMM)
 
@@ -90,32 +99,34 @@ After transformation:
 
 Revenue is modeled as:
 
+```
 Revenue = Intercept + TV + Search + Social + Controls
+```
 
 Where:
 
 - TV, Search, Social → Adstock + Saturation transformed
 - Controls → price, holiday, seasonality
 
----
+-----
 
 ## Feature Engineering
 
 ### 1. Adstock Transformation
 
 Captures delayed advertising effects:
-- Marketing impact persists over time
-- Each week's spend decays gradually
 
----
+- Marketing impact persists over time
+- Each week’s spend decays gradually
 
 ### 2. Hill Saturation
 
 Captures diminishing returns:
+
 - Initial spend has high impact
 - Additional spend yields lower incremental returns
 
----
+-----
 
 ## Parameter Optimisation
 
@@ -127,7 +138,7 @@ For each channel, the model performs grid search over:
 
 The combination that minimises residual error is selected.
 
----
+-----
 
 ## Regression Model
 
@@ -137,17 +148,17 @@ A standard OLS regression (Statsmodels) is used to estimate:
 - Statistical significance
 - Model fit (R², MAPE)
 
----
+-----
 
 # ETL Pipeline (Production Style)
 
-The pipeline (pipeline.py) simulates a real-world marketing data system.
+The pipeline (`pipeline.py`) simulates a real-world marketing data system.
 
----
+-----
 
 ## 1. Extract
 
-- Reads data.csv
+- Reads `data.csv`
 - Simulates arrival of a new weekly record
 - Mimics real marketing data ingestion
 
@@ -158,38 +169,46 @@ In production, this could connect to:
 - GA4
 - CRM systems
 
----
+-----
 
 ## 2. Transform
 
 ### Data Validation
+
 Checks for:
+
 - Missing dates
 - Negative spend values
 - Duplicate records
 - Invalid revenue values
 
 ### Feature Engineering
+
 Applies:
+
 - Adstock transformation
 - Hill saturation transformation
-(using parameters from model_params.csv if available)
 
----
+(using parameters from `model_params.csv` if available)
+
+-----
 
 ## 3. Load
 
 Data is stored in a local DuckDB warehouse:
 
+```
 mmm_warehouse.duckdb
+```
 
 Features:
+
 - Fast analytical queries
 - Lightweight deployment
 - SQL-based storage
 - No external infrastructure required
 
----
+-----
 
 ## 4. Model Retraining
 
@@ -200,65 +219,68 @@ After each pipeline run:
 - Metrics are recalculated
 
 Outputs:
+
 - R²
 - MAPE
 - Observation count
 
----
+-----
 
 ## 5. Monitoring & Logging
 
-Every run is logged in:
-
-pipeline_log.csv
+Every run is logged in `pipeline_log.csv`.
 
 Example:
 
-| run_at | status | r2 | mape | n_obs |
-|--------|--------|----|------|------|
-| 2026-06-09T09:00 | SUCCESS | 0.95 | 4.8 | 157 |
+|run_at          |status |r2  |mape|n_obs|
+|----------------|-------|----|----|-----|
+|2026-06-09T09:00|SUCCESS|0.95|4.8 |157  |
 
 This provides a lightweight model monitoring system.
 
----
+-----
 
 # Running the Project
 
 ## 1. Install dependencies
 
-bash pip install -r requirements.txt 
-
----
+```bash
+pip install -r requirements.txt
+```
 
 ## 2. Generate synthetic data
 
-bash python 1_generate_data.py 
-
----
+```bash
+python 1_generate_data.py
+```
 
 ## 3. Train MMM model
 
-bash python 2_model.py 
+```bash
+python 2_model.py
+```
 
 Outputs:
-- contributions.csv
-- model_params.csv
-- mmm_results.png
 
----
+- `contributions.csv`
+- `model_params.csv`
+- `mmm_results.png`
 
 ## 4. Run ETL pipeline
 
-bash python pipeline.py 
+```bash
+python pipeline.py
+```
 
 This will:
-- ingest new data
-- transform features
-- load into DuckDB
-- retrain MMM
-- log results
 
----
+- Ingest new data
+- Transform features
+- Load into DuckDB
+- Retrain MMM
+- Log results
+
+-----
 
 # Outputs
 
@@ -268,7 +290,9 @@ Breakdown of revenue by channel over time.
 
 ## ROI per Channel
 
+```
 ROI = Revenue Attributed / Spend
+```
 
 Used to compare marketing efficiency.
 
@@ -278,8 +302,7 @@ Used to compare marketing efficiency.
 - Attribution breakdown
 - Channel performance comparison
 
----
-
+-----
 
 # Future Improvements
 

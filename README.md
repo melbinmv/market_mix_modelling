@@ -26,7 +26,7 @@ This project solves that by:
 
 The system has two main components:
 
-### 1. MMM Model (2_model.py)
+### 1. MMM Model (model.py)
 - Builds transformation + regression-based MMM
 - Performs grid search for optimal parameters
 - Estimates channel contribution and ROI
@@ -41,58 +41,44 @@ The system has two main components:
 ---
 
 # Architecture
-                        ┌────────────────────┐
-                        │ 1_generate_data.py │
-                        │ Synthetic Data      │
-                        └──────────┬─────────┘
-                                   │
-                                   ▼
-                              ┌─────────┐
-                              │ data.csv│
-                              └────┬────┘
-                                   │
-         ┌─────────────────────────┼─────────────────────────┐
-         │                         │                         │
-         ▼                         ▼                         ▼
+graph TD
 
- ┌────────────────┐     ┌────────────────┐     ┌────────────────────┐
- │ 2_model.py     │     │ pipeline.py     │     │ transforms.py      │
- │ MMM Training   │     │ ETL Pipeline    │     │ Feature Engineering │
- └──────┬─────────┘     └──────┬─────────┘     └─────────┬──────────┘
-        │                      │                        │
-        ▼                      ▼                        ▼
+A[1_generate_data.py<br>Generate Synthetic Data] --> B[data.csv]
 
- ┌────────────────┐   ┌────────────────────┐   ┌────────────────────┐
- │ OLS Regression │   │ DuckDB Warehouse   │   │ Adstock + Saturation│
- │ Attribution    │   │ mmm_data table     │   │ Transformations     │
- └──────┬─────────┘   └──────────┬─────────┘   └────────────────────┘
-        │                        │
-        ▼                        ▼
+B --> C[pipeline.py<br>ETL Orchestration]
 
- ┌────────────────┐     ┌────────────────────┐
- │ ROI Analysis   │     │ pipeline_log.csv   │
- │ Contribution   │     │ Monitoring Log     │
- └────────────────┘     └────────────────────┘
+C --> C1[EXTRACT<br>Read CSV + Simulate New Week]
+C1 --> C2[TRANSFORM<br>Validation + Adstock + Saturation]
+C2 --> C3[LOAD<br>DuckDB Warehouse]
+
+C3 --> D[mmm_warehouse.duckdb]
+
+D --> E[Refit MMM Model<br>OLS Regression]
+
+E --> F[Channel Attribution]
+E --> G[ROI Analysis]
+E --> H[Model Diagnostics]
+
+E --> I[pipeline_log.csv<br>Run Monitoring]
 
 # Project Structure
 
-mmm-project/
-│
-├── 1_generate_data.py     # Synthetic marketing data generator
-├── 2_model.py             # MMM training + ROI + attribution
-├── pipeline.py            # ETL + automation + retraining
-├── transforms.py          # Adstock + Hill saturation functions
-│
-├── data.csv               # Input dataset
-├── contributions.csv      # Channel revenue attribution
-├── model_params.csv       # Learned MMM parameters
-├── mmm_results.png        # Diagnostic plots
-├── pipeline_log.csv       # ETL run logs
-├── mmm_warehouse.duckdb   # Local analytics warehouse
-│
-├── requirements.txt
-├── README.md
-└── .gitignore
+graph TD
+
+A[mmm-project] --> B[1_generate_data.py]
+A --> C[2_model.py]
+A --> D[pipeline.py]
+A --> E[transforms.py]
+
+A --> F[data.csv]
+A --> G[contributions.csv]
+A --> H[model_params.csv]
+A --> I[mmm_results.png]
+A --> J[pipeline_log.csv]
+A --> K[mmm_warehouse.duckdb]
+A --> L[requirements.txt]
+A --> M[README.md]
+A --> N[.gitignore]
 
 ---
 

@@ -1,5 +1,5 @@
 """
-1_generate_data.py
+generate_data.py
 ------------------
 Generates a synthetic weekly MMM dataset with known ground truth.
 Channels: TV, Paid Search, Paid Social

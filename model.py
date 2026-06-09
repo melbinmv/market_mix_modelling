@@ -1,5 +1,5 @@
 """
-2_model.py
+model.py
 ----------
 Builds a Marketing Mix Model from scratch using:
   - Grid search to find best adstock decay + Hill saturation params

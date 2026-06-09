@@ -1,8 +1,8 @@
 # Marketing Mix Modeling (MMM) + ETL Pipeline Project
 
-An end-to-end Marketing Mix Modeling (MMM) system built in Python that simulates marketing data, applies feature transformations (Adstock + Hill Saturation), estimates channel impact using OLS regression, and operationalises the workflow through an automated ETL pipeline with DuckDB storage and model retraining.
+An end-to-end Marketing Mix Modeling (MMM) system built in Python that simulates marketing data, applies feature transformations (Adstock + Hill Saturation), estimates channel impact using OLS regression and operationalises the workflow through an automated ETL pipeline with DuckDB storage and model retraining.
 
-This project demonstrates both data science (MMM modelling) and data engineering (ETL pipeline + warehouse + automation) capabilities.
+
 
 ---
 
@@ -41,14 +41,58 @@ The system has two main components:
 ---
 
 # Architecture
+                        ┌────────────────────┐
+                        │ 1_generate_data.py │
+                        │ Synthetic Data      │
+                        └──────────┬─────────┘
+                                   │
+                                   ▼
+                              ┌─────────┐
+                              │ data.csv│
+                              └────┬────┘
+                                   │
+         ┌─────────────────────────┼─────────────────────────┐
+         │                         │                         │
+         ▼                         ▼                         ▼
 
-text id="0kq9xm"                         ┌────────────────────┐                         │ 1_generate_data.py │                         │ Synthetic Data      │                         └──────────┬─────────┘                                    │                                    ▼                               ┌─────────┐                               │ data.csv│                               └────┬────┘                                    │          ┌─────────────────────────┼─────────────────────────┐          │                         │                         │          ▼                         ▼                         ▼   ┌────────────────┐     ┌────────────────┐     ┌────────────────────┐  │ 2_model.py     │     │ pipeline.py     │     │ transforms.py      │  │ MMM Training   │     │ ETL Pipeline    │     │ Feature Engineering │  └──────┬─────────┘     └──────┬─────────┘     └─────────┬──────────┘         │                      │                        │         ▼                      ▼                        ▼   ┌────────────────┐   ┌────────────────────┐   ┌────────────────────┐  │ OLS Regression │   │ DuckDB Warehouse   │   │ Adstock + Saturation│  │ Attribution    │   │ mmm_data table     │   │ Transformations     │  └──────┬─────────┘   └──────────┬─────────┘   └────────────────────┘         │                        │         ▼                        ▼   ┌────────────────┐     ┌────────────────────┐  │ ROI Analysis   │     │ pipeline_log.csv   │  │ Contribution   │     │ Monitoring Log     │  └────────────────┘     └────────────────────┘ 
+ ┌────────────────┐     ┌────────────────┐     ┌────────────────────┐
+ │ 2_model.py     │     │ pipeline.py     │     │ transforms.py      │
+ │ MMM Training   │     │ ETL Pipeline    │     │ Feature Engineering │
+ └──────┬─────────┘     └──────┬─────────┘     └─────────┬──────────┘
+        │                      │                        │
+        ▼                      ▼                        ▼
 
----
+ ┌────────────────┐   ┌────────────────────┐   ┌────────────────────┐
+ │ OLS Regression │   │ DuckDB Warehouse   │   │ Adstock + Saturation│
+ │ Attribution    │   │ mmm_data table     │   │ Transformations     │
+ └──────┬─────────┘   └──────────┬─────────┘   └────────────────────┘
+        │                        │
+        ▼                        ▼
+
+ ┌────────────────┐     ┌────────────────────┐
+ │ ROI Analysis   │     │ pipeline_log.csv   │
+ │ Contribution   │     │ Monitoring Log     │
+ └────────────────┘     └────────────────────┘
 
 # Project Structure
 
-text id="w2d8qs" mmm-project/ │ ├── 1_generate_data.py     # Synthetic marketing data generator ├── 2_model.py             # MMM training + ROI + attribution ├── pipeline.py            # ETL + automation + retraining ├── transforms.py          # Adstock + Hill saturation functions │ ├── data.csv               # Input dataset ├── contributions.csv      # Channel revenue attribution ├── model_params.csv       # Learned MMM parameters ├── mmm_results.png        # Diagnostic plots ├── pipeline_log.csv       # ETL run logs ├── mmm_warehouse.duckdb   # Local analytics warehouse │ ├── requirements.txt ├── README.md └── .gitignore 
+mmm-project/
+│
+├── 1_generate_data.py     # Synthetic marketing data generator
+├── 2_model.py             # MMM training + ROI + attribution
+├── pipeline.py            # ETL + automation + retraining
+├── transforms.py          # Adstock + Hill saturation functions
+│
+├── data.csv               # Input dataset
+├── contributions.csv      # Channel revenue attribution
+├── model_params.csv       # Learned MMM parameters
+├── mmm_results.png        # Diagnostic plots
+├── pipeline_log.csv       # ETL run logs
+├── mmm_warehouse.duckdb   # Local analytics warehouse
+│
+├── requirements.txt
+├── README.md
+└── .gitignore
 
 ---
 
@@ -250,29 +294,6 @@ Used to compare marketing efficiency.
 
 ---
 
-# Skills Demonstrated
-
-## Data Science
-- Marketing Mix Modeling (MMM)
-- OLS Regression (Statsmodels)
-- Feature Engineering
-- Hyperparameter Search
-- Attribution Modeling
-- ROI Analysis
-
-## Data Engineering
-- ETL pipeline design
-- Data validation framework
-- DuckDB analytical warehouse
-- Automated retraining loop
-- Pipeline logging & monitoring
-
-## Analytics Engineering
-- Business metric modelling
-- Revenue decomposition
-- Marketing performance analysis
-
----
 
 # Future Improvements
 

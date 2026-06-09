@@ -61,32 +61,24 @@ graph TD
 
 # Project Structure
 
-```mermaid
-graph TD
-    A[mmm-project]
-
-    A --> B[Core Scripts]
-    B --> B1[1_generate_data.py<br>Data simulation]
-    B --> B2[2_model.py<br>MMM training + ROI]
-    B --> B3[pipeline.py<br>ETL + retraining pipeline]
-    B --> B4[transforms.py<br>Adstock + saturation functions]
-
-    A --> C[Input Data]
-    C --> C1[data.csv<br>Marketing dataset]
-
-    A --> D[Model Outputs]
-    D --> D1[contributions.csv<br>Channel attribution]
-    D --> D2[model_params.csv<br>Learned parameters]
-    D --> D3[mmm_results.png<br>Model diagnostics]
-
-    A --> E[Pipeline & Logs]
-    E --> E1[pipeline_log.csv<br>Run history]
-    E --> E2[mmm_warehouse.duckdb<br>Local data warehouse]
-
-    A --> F[Config & Docs]
-    F --> F1[requirements.txt]
-    F --> F2[README.md]
-    F --> F3[.gitignore]
+```
+mmm-project/
+│
+├── 1_generate_data.py     # Synthetic marketing data generator
+├── 2_model.py             # MMM training + ROI + attribution
+├── pipeline.py            # ETL + automation + retraining
+├── transforms.py          # Adstock + Hill saturation functions
+│
+├── data.csv               # Input dataset
+├── contributions.csv      # Channel revenue attribution
+├── model_params.csv       # Learned MMM parameters
+├── mmm_results.png        # Diagnostic plots
+├── pipeline_log.csv       # ETL run logs
+├── mmm_warehouse.duckdb   # Local analytics warehouse
+│
+├── requirements.txt
+├── README.md
+└── .gitignore
 ```
 
 -----
